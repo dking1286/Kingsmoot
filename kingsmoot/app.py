@@ -3,7 +3,7 @@ from flask_login import (LoginManager, login_user, logout_user,
                              login_required, current_user)
 from flask_bcrypt import check_password_hash
 
-import kingsmoot.models as models
+import models
 
 app = Flask(__name__)
 app.secret_key = 'sljdnfohr80wnfskjdnf9283rnkwjndf982rknjdsn9f8wrkn:woenf082'
