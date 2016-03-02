@@ -3,7 +3,7 @@
 <!-- Inputs: questions (SelectQuery), email (str), is_authenticated (bool) -->
 
 {% block content %}
-{{ make_menu(email, is_authenticated }}
+{{ make_menu(email, is_authenticated) }}
 <h2>Questions</h2>
 {% if questions.count() %}
     {% for question in questions %}
