@@ -64,4 +64,19 @@ class LoginForm(Form):
     )
 
 
-# TODO: Write new question and new answer forms
+class NewQuestionForm(Form):
+    text = TextAreaField(
+        'Ask anything...',
+        validators=[
+            DataRequired()
+        ]
+    )
+
+
+class NewAnswerForm(Form):
+    text = TextAreaField(
+        'Answer this question...',
+        validators=[
+            DataRequired()
+        ]
+    )
