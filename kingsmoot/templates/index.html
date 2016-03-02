@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+{% from 'macros.html' import make_menu %}
+<!-- Inputs: -->
+
+{% block content %}
+{{ make_menu(email, is_authenticated }}
+<h2>Questions</h2>
+{% if questions.count() %}
+
+{% else %}
+No questions have been asked yet.
+<a href="{{ url_for('new_question') }}">Be the first!</a>
+{% endblock %}

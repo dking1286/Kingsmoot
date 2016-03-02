@@ -52,7 +52,7 @@ Views:
   login
   logout
   register
-  stream
+  index (stream)
   new_question
   view_question (allows to input a new answer)
 
