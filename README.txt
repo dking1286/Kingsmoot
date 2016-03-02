@@ -28,7 +28,6 @@ Models:
   Question
     text
     user
-    subject
     timestamp
   Answer
     text

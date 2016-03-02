@@ -25,7 +25,7 @@ class User(BaseModel, UserMixin):
     password = CharField(max_length=100)
 
     @classmethod
-    def securely_create(cls, email, first_name, last_name, password):
+    def add(cls, email, first_name, last_name, password):
         try:
             with DB.transaction():
                 cls.create(
@@ -45,9 +45,24 @@ class Question(BaseModel):
     subject = CharField()
     timestamp = DateTimeField(default=datetime.datetime.now)
 
+    @classmethod
+    def add(cls, text, user):
+        cls.create(
+            text=text,
+            user=user
+        )
+
 
 class Answer(BaseModel):
     text = TextField()
     user = ForeignKeyField(User, related_name='answers')
     question = ForeignKeyField(Question, related_name='answers')
     timestamp = DateTimeField(default=datetime.datetime.now)
+
+    @classmethod
+    def add(cls, text, user, question):
+        cls.create(
+            text=text,
+            user=user,
+            question=question
+        )
