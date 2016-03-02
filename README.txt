@@ -50,6 +50,7 @@ Forms:
 
 Views:
   login
+  logout
   register
   stream
   new_question

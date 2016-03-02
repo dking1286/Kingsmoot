@@ -1,0 +1,24 @@
+{% macro render_field(field) %}
+{% if field.errors %}
+<div class="u-full-width field errors">
+    <ul>
+        {% for error in errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{{ field.label }}
+{{ field }}
+{% endmacro %}
+
+{% macro make_menu(email, is_authenticated) %}
+<nav>
+    {% if is_authenticated %}
+    Welcome, {{ email }}!
+    <a href="{{ url_for('logout') }}">Log out</a> |
+    <a href="{{ url_for('new_question') }}">New question</a>
+    {% endif %}
+</nav>
+{% endmacro %}
+
