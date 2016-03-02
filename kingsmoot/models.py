@@ -19,14 +19,20 @@ class BaseModel(Model):
 
 class User(BaseModel, UserMixin):
     email = CharField(unique=True)
+    first_name = CharField()
+    last_name = CharField()
+    join_date = DateTimeField()
     password = CharField(max_length=100)
 
     @classmethod
-    def securely_create(cls, email, password):
+    def securely_create(cls, email, first_name, last_name, password):
         try:
             with DB.transaction():
                 cls.create(
                     email=email,
+                    first_name=first_name,
+                    last_name=last_name,
+                    join_date=datetime.datetime.now(),
                     password=generate_password_hash(password)
                 )
         except IntegrityError:

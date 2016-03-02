@@ -1,4 +1,4 @@
-Kingsmoot, a miniature Quora clone
+Kingsmoot, a miniature forum app
 
 Author: Daniel King
 
@@ -24,6 +24,7 @@ Models:
     first_name
     last_name
     join_date
+    password
   Question
     text
     user
@@ -44,7 +45,6 @@ Forms:
     first_name
     last_name
   new_question_form
-    subject (dropdown)
     text
   new_answer_form
     text
