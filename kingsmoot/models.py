@@ -40,6 +40,7 @@ class User(BaseModel, UserMixin):
 
 
 class Question(BaseModel):
+    id = PrimaryKeyField()
     text = TextField()
     user = ForeignKeyField(User, related_name='questions')
     subject = CharField()
@@ -66,3 +67,10 @@ class Answer(BaseModel):
             user=user,
             question=question
         )
+
+
+def init_db():
+    """Initialize the database"""
+    DB.connect()
+    DB.create_tables([User, Question, Answer], safe=True)
+    DB.close()

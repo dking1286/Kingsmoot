@@ -1,4 +1,4 @@
-from flask import Flask, g
+from flask import Flask, g, render_template
 from flask_login import (LoginManager, login_user, logout_user,
                              login_required, current_user)
 from flask_bcrypt import check_password_hash
@@ -42,6 +42,47 @@ def after_request(response):
     return response
 
 
+@app.route('/register')
+def register():
+    pass
+
+
+@app.route('/login')
+def login():
+    pass
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    pass
+
+
+@app.route('/')
+def index():
+    """Home page question stream"""
+    questions = models.Question.select().order_by(models.Question.timestamp).limit(10)
+    inputs = {
+        'questions': questions,
+        'email': None,
+        'is_authenticated': False
+    }
+    return render_template('index.html', **inputs)
+
+
+@app.route('/view_question/<question_id>')
+@login_required
+def view_question(question_id):
+    pass
+
+
+@app.route('/new_question')
+@login_required
+def new_question():
+    pass
+
+
 if __name__ == '__main__':
+    models.init_db()
     app.run(**run_context)
 
