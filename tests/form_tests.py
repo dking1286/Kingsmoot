@@ -56,7 +56,7 @@ def test_register_form_missing_password1():
     assert_raises(forms.ValidationError, form.validate)
 
 
-def test_register_form_too_short_passwrod1():
+def test_register_form_too_short_password1():
     form = forms.RegisterForm()
     test_data = ["Daniel", "King", "daniel.oliver.king@gmail.com", "h", "hithere"]
     apply_data_to_form(test_data, form)
