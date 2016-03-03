@@ -63,9 +63,7 @@ def index():
     """Home page question stream"""
     questions = models.Question.select().order_by(models.Question.timestamp).limit(10)
     inputs = {
-        'questions': questions,
-        'email': None,
-        'is_authenticated': False
+        'questions': questions
     }
     return render_template('index.html', **inputs)
 
