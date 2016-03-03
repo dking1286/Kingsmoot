@@ -3,7 +3,7 @@ from wtforms import StringField, PasswordField, TextAreaField
 from wtforms.validators import (DataRequired, ValidationError, Email,
                                 Length, EqualTo)
 
-from models import User
+from kingsmoot.models import User
 
 
 def email_exists(form, field):
