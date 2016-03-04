@@ -21,7 +21,7 @@ class User(BaseModel, UserMixin):
     email = CharField(unique=True)
     first_name = CharField()
     last_name = CharField()
-    join_date = DateTimeField()
+    join_date = DateTimeField(default=datetime.datetime.now)
     password = CharField(max_length=100)
 
     @classmethod

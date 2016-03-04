@@ -3,7 +3,8 @@ from flask_login import (LoginManager, login_user, logout_user,
                              login_required, current_user)
 from flask_bcrypt import check_password_hash
 
-import models
+import kingsmoot.models as models
+from kingsmoot.forms import RegisterForm
 
 app = Flask(__name__)
 app.secret_key = 'sljdnfohr80wnfskjdnf9283rnkwjndf982rknjdsn9f8wrkn:woenf082'
@@ -44,7 +45,7 @@ def after_request(response):
 
 @app.route('/register')
 def register():
-    pass
+    form = RegisterForm()
 
 
 @app.route('/login')

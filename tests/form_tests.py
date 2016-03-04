@@ -1,78 +1,212 @@
 from nose.tools import *
+from peewee import *
+from playhouse.test_utils import test_database
 
-import kingsmoot.forms as forms
+from kingsmoot.forms import (RegisterForm, LoginForm,
+                             NewQuestionForm, NewAnswerForm, ValidationError)
+from kingsmoot.models import User
+import kingsmoot.main
+
+TEST_DB = SqliteDatabase(':memory:')
+TEST_DB.connect()
+TEST_DB.create_tables([User], safe=True)
 
 
-# TODO Set up application context in order to be able to run these tests
+app = kingsmoot.main.app.test_client()
 
-def apply_data_to_form(data, form):
-    assert len(data) == len(form), "Data list and form do not have the same length"
 
-    i = 0
-    for field in form:
-        field.data = data[i]
-        i += 1
+def create_users(count=2):
+    for i in range(count):
+        User.add(
+            email='test_{}@example.com'.format(i),
+            first_name='test_{}'.format(i),
+            last_name='test_{}'.format(i),
+            password='password'
+        )
+
+
+def set_up():
+    kingsmoot.main.app.config['TESTING'] = True
+    kingsmoot.main.app.config['WTF_CSRF_ENABLED'] = False
+
+
+@kingsmoot.main.app.route('/registerformtester', methods=['POST'])
+def register_form_route():
+    register_form = RegisterForm()
+
+    for field in register_form:
+        if not field.validate(register_form):
+                return 'Bad', 404
+    return 'Good', 200
 
 
 def test_register_form_valid():
-    form = forms.RegisterForm()
-    test_data = ["Daniel", "King", "daniel.oliver.king@gmail.com", "hithere", "hithere"]
-    apply_data_to_form(test_data, form)
-    assert_true(form.validate())
+    with test_database(TEST_DB, [User]):
+        test_data = {
+            'first_name': 'Daniel',
+            'last_name': 'King',
+            'email': 'testform@test.com',
+            'password': 'hithere',
+            'password2': 'hithere',
+            'csrf_token': 'secret'
+        }
+        rv = app.post(
+            '/registerformtester',
+            data=test_data
+        )
+        assert_equal(rv.status_code, 200)
 
 
 def test_register_form_missing_first_name():
-    form = forms.RegisterForm()
-    test_data = ["", "King", "daniel.oliver.king@gmail.com", "hithere", "hithere"]
-    apply_data_to_form(test_data, form)
-    assert_raises(forms.ValidationError, form.validate)
+    with test_database(TEST_DB, [User]):
+        test_data = {
+            'first_name': '',
+            'last_name': 'King',
+            'email': 'testform@test.com',
+            'password': 'hithere',
+            'password2': 'hithere',
+            'csrf_token': 'secret'
+        }
+        rv = app.post(
+            '/registerformtester',
+            data=test_data
+        )
+        assert_equal(rv.status_code, 404)
 
 
 def test_register_form_missing_last_name():
-    form = forms.RegisterForm()
-    test_data = ["Daniel", "", "daniel.oliver.king@gmail.com", "hithere", "hithere"]
-    apply_data_to_form(test_data, form)
-    assert_raises(forms.ValidationError, form.validate)
+    with test_database(TEST_DB, [User]):
+        test_data = {
+            'first_name': 'Daniel',
+            'last_name': '',
+            'email': 'testform@test.com',
+            'password': 'hithere',
+            'password2': 'hithere',
+            'csrf_token': 'secret'
+        }
+        rv = app.post(
+            '/registerformtester',
+            data=test_data
+        )
+        assert_equal(rv.status_code, 404)
 
 
 def test_register_form_missing_email():
-    form = forms.RegisterForm()
-    test_data = ["Daniel", "King", "", "hithere", "hithere"]
-    apply_data_to_form(test_data, form)
-    assert_raises(forms.ValidationError, form.validate)
+    with test_database(TEST_DB, [User]):
+        test_data = {
+            'first_name': 'Daniel',
+            'last_name': 'King',
+            'email': '',
+            'password': 'hithere',
+            'password2': 'hithere',
+            'csrf_token': 'secret'
+        }
+        rv = app.post(
+            '/registerformtester',
+            data=test_data
+        )
+        assert_equal(rv.status_code, 404)
 
 
 def test_register_form_invalid_email():
-    form = forms.RegisterForm()
-    test_data = ["Daniel", "King", "daniel.oliver.king", "hithere", "hithere"]
-    apply_data_to_form(test_data, form)
-    assert_raises(forms.ValidationError, form.validate)
+    with test_database(TEST_DB, [User]):
+        test_data = {
+            'first_name': 'Daniel',
+            'last_name': 'King',
+            'email': 'testform',
+            'password': 'hithere',
+            'password2': 'hithere',
+            'csrf_token': 'secret'
+        }
+        rv = app.post(
+            '/registerformtester',
+            data=test_data
+        )
+        assert_equal(rv.status_code, 404)
+
+
+def test_register_form_email_exists():
+    with test_database(TEST_DB, [User]):
+        create_users()
+        test_data = {
+            'first_name': 'Daniel',
+            'last_name': 'King',
+            'email': 'test_1@example.com',
+            'password': 'hithere',
+            'password2': 'hithere',
+            'csrf_token': 'secret'
+        }
+        rv = app.post(
+            '/registerformtester',
+            data=test_data
+        )
+        assert_equal(rv.status_code, 404)
 
 
 def test_register_form_missing_password1():
-    form = forms.RegisterForm()
-    test_data = ["Daniel", "King", "daniel.oliver.king@gmail.com", "", "hithere"]
-    apply_data_to_form(test_data, form)
-    assert_raises(forms.ValidationError, form.validate)
+    with test_database(TEST_DB, [User]):
+        test_data = {
+            'first_name': 'Daniel',
+            'last_name': 'King',
+            'email': 'testform@test.com',
+            'password': '',
+            'password2': 'hithere',
+            'csrf_token': 'secret'
+        }
+        rv = app.post(
+            '/registerformtester',
+            data=test_data
+        )
+        assert_equal(rv.status_code, 404)
 
 
 def test_register_form_too_short_password1():
-    form = forms.RegisterForm()
-    test_data = ["Daniel", "King", "daniel.oliver.king@gmail.com", "h", "hithere"]
-    apply_data_to_form(test_data, form)
-    assert_raises(forms.ValidationError, form.validate)
+    with test_database(TEST_DB, [User]):
+        test_data = {
+            'first_name': 'Daniel',
+            'last_name': 'King',
+            'email': 'testform@test.com',
+            'password': 'h',
+            'password2': 'h',
+            'csrf_token': 'secret'
+        }
+        rv = app.post(
+            '/registerformtester',
+            data=test_data
+        )
+        assert_equal(rv.status_code, 404)
 
 
 def test_register_form_wrong_password1():
-    form = forms.RegisterForm()
-    test_data = ["Daniel", "King", "daniel.oliver.king@gmail.com", "hey", "hithere"]
-    apply_data_to_form(test_data, form)
-    assert_raises(forms.ValidationError, form.validate)
+    with test_database(TEST_DB, [User]):
+        test_data = {
+            'first_name': 'Daniel',
+            'last_name': 'King',
+            'email': 'testform@test.com',
+            'password': 'hi',
+            'password2': 'hithere',
+            'csrf_token': 'secret'
+        }
+        rv = app.post(
+            '/registerformtester',
+            data=test_data
+        )
+        assert_equal(rv.status_code, 404)
 
 
 def test_register_form_missing_password2():
-    form = forms.RegisterForm()
-    test_data = ["Daniel", "King", "daniel.oliver.king@gmail.com", "hithere", ""]
-    apply_data_to_form(test_data, form)
-    assert_raises(forms.ValidationError, form.validate)
+    with test_database(TEST_DB, [User]):
+        test_data = {
+            'first_name': 'Daniel',
+            'last_name': 'King',
+            'email': 'testform@test.com',
+            'password': 'hithere',
+            'password2': '',
+            'csrf_token': 'secret'
+        }
+        rv = app.post(
+            '/registerformtester',
+            data=test_data
+        )
+        assert_equal(rv.status_code, 404)
 
