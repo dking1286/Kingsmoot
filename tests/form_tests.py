@@ -29,15 +29,48 @@ def set_up():
     kingsmoot.main.app.config['TESTING'] = True
     kingsmoot.main.app.config['WTF_CSRF_ENABLED'] = False
 
+GOOD_STATUS = 200
+BAD_STATUS = 404
+
 
 @kingsmoot.main.app.route('/registerformtester', methods=['POST'])
-def register_form_route():
+def register_form_view():
     register_form = RegisterForm()
 
     for field in register_form:
         if not field.validate(register_form):
-                return 'Bad', 404
-    return 'Good', 200
+                return 'Bad', BAD_STATUS
+    return 'Good', GOOD_STATUS
+
+
+@kingsmoot.main.app.route('/loginformtester', methods=['POST'])
+def login_form_view():
+    login_form = LoginForm()
+
+    for field in login_form:
+        if not field.validate(login_form):
+                return 'Bad', BAD_STATUS
+    return 'Good', GOOD_STATUS
+
+
+@kingsmoot.main.app.route('/newquestionformtester', methods=['POST'])
+def new_question_form_view():
+    new_question_form = NewQuestionForm()
+
+    for field in new_question_form:
+        if not field.validate(new_question_form):
+                return 'Bad', BAD_STATUS
+    return 'Good', GOOD_STATUS
+
+
+@kingsmoot.main.app.route('/newanswerformtester', methods=['POST'])
+def new_answer_form_view():
+    new_answer_form = NewAnswerForm()
+
+    for field in new_answer_form:
+        if not field.validate(new_answer_form):
+                return 'Bad', BAD_STATUS
+    return 'Good', GOOD_STATUS
 
 
 def test_register_form_valid():
@@ -54,7 +87,7 @@ def test_register_form_valid():
             '/registerformtester',
             data=test_data
         )
-        assert_equal(rv.status_code, 200)
+        assert_equal(rv.status_code, GOOD_STATUS)
 
 
 def test_register_form_missing_first_name():
@@ -209,4 +242,96 @@ def test_register_form_missing_password2():
             data=test_data
         )
         assert_equal(rv.status_code, 404)
+
+
+def test_login_form_valid():
+    test_data = {
+        'email': 'test@example.com',
+        'password': 'password'
+    }
+    rv = app.post(
+        '/loginformtester',
+        data=test_data
+    )
+    assert_equal(rv.status_code, GOOD_STATUS)
+
+
+def test_login_form_missing_email():
+    test_data = {
+        'email': '',
+        'password': 'password'
+    }
+    rv = app.post(
+        '/loginformtester',
+        data=test_data
+    )
+    assert_equal(rv.status_code, BAD_STATUS)
+
+
+def test_login_form_invalid_email():
+    test_data = {
+        'email': 'test',
+        'password': 'password'
+    }
+    rv = app.post(
+        '/loginformtester',
+        data=test_data
+    )
+    assert_equal(rv.status_code, BAD_STATUS)
+
+
+def test_login_form_missing_password():
+    test_data = {
+        'email': 'test@example.com',
+        'password': ''
+    }
+    rv = app.post(
+        '/loginformtester',
+        data=test_data
+    )
+    assert_equal(rv.status_code, BAD_STATUS)
+
+
+def test_new_question_form_valid():
+    test_data = {
+        'text': 'Why is the sky?'
+    }
+    rv = app.post(
+        '/newquestionformtester',
+        data=test_data
+    )
+    assert_equal(rv.status_code, GOOD_STATUS)
+
+
+def test_new_question_form_missing_text():
+    test_data = {
+        'text': ''
+    }
+    rv = app.post(
+        '/newquestionformtester',
+        data=test_data
+    )
+    assert_equal(rv.status_code, BAD_STATUS)
+
+
+def test_new_answer_form_valid():
+    test_data = {
+        'text': 'Because.'
+    }
+    rv = app.post(
+        '/newanswerformtester',
+        data=test_data
+    )
+    assert_equal(rv.status_code, GOOD_STATUS)
+
+
+def test_new_answer_form_missing_text():
+    test_data = {
+        'text': ''
+    }
+    rv = app.post(
+        '/newanswerformtester',
+        data=test_data
+    )
+    assert_equal(rv.status_code, BAD_STATUS)
 
