@@ -3,18 +3,17 @@ from peewee import *
 from playhouse.test_utils import test_database
 
 from kingsmoot.forms import (RegisterForm, LoginForm,
-                             NewQuestionForm, NewAnswerForm, ValidationError)
-from kingsmoot.models import User
+                             NewQuestionForm, NewAnswerForm)
+from kingsmoot.models import User, Question, Answer
 import kingsmoot.main
 
 TEST_DB = SqliteDatabase(':memory:')
 TEST_DB.connect()
-TEST_DB.create_tables([User], safe=True)
-
 
 app = kingsmoot.main.app.test_client()
 
 
+# Helper functions #################
 def create_users(count=2):
     for i in range(count):
         User.add(
@@ -25,6 +24,35 @@ def create_users(count=2):
         )
 
 
+def create_data(count=2):
+    for i in range(count):
+        User.add(
+            email='test_{}@example.com'.format(i),
+            first_name='test_{}'.format(i),
+            last_name='test_{}'.format(i),
+            password='password'
+        )
+
+    users = User.select()
+    for user in users:
+        i = user.first_name[-1]
+        for j in range(count):
+            Question.add(
+                text="text_{}_{}".format(i, j),
+                user=user
+            )
+
+    questions = Question.select()
+    for user in users:
+        for question in questions:
+            Answer.add(
+                text="text",
+                user=user,
+                question=question
+            )
+
+
+# Set up #########################
 def set_up():
     kingsmoot.main.app.config['TESTING'] = True
     kingsmoot.main.app.config['WTF_CSRF_ENABLED'] = False
@@ -33,6 +61,7 @@ GOOD_STATUS = 200
 BAD_STATUS = 404
 
 
+# Form tests ####################
 @kingsmoot.main.app.route('/registerformtester', methods=['POST'])
 def register_form_view():
     register_form = RegisterForm()
@@ -335,3 +364,22 @@ def test_new_answer_form_missing_text():
     )
     assert_equal(rv.status_code, BAD_STATUS)
 
+
+# Model tests ###########################
+def test_user_creation():
+    with test_database(TEST_DB, [User, Question, Answer]):
+        create_data()
+        user = User.select().where(User.first_name == 'test_0').get()
+        assert_equal(user.email, 'test_0@example.com')
+
+
+def test_no_duplicate_email():
+    with test_database(TEST_DB, [User, Question, Answer]):
+        create_data()
+        user_info = {
+            'email': 'test_0@example.com',
+            'first_name': 'Daniel',
+            'last_name': 'King',
+            'password': 'password'
+        }
+        assert_raises(ValueError, User.add, **user_info)

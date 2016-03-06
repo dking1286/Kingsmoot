@@ -32,7 +32,6 @@ class User(BaseModel, UserMixin):
                     email=email,
                     first_name=first_name,
                     last_name=last_name,
-                    join_date=datetime.datetime.now(),
                     password=generate_password_hash(password)
                 )
         except IntegrityError:
@@ -43,7 +42,6 @@ class Question(BaseModel):
     id = PrimaryKeyField()
     text = TextField()
     user = ForeignKeyField(User, related_name='questions')
-    subject = CharField()
     timestamp = DateTimeField(default=datetime.datetime.now)
 
     @classmethod
