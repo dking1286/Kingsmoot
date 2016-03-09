@@ -464,6 +464,41 @@ def test_question_get_answers():
                 answer.text[-1]
             )
 
+# View tests ###########################
+
+
+def test_index_view_no_questions():
+    assert_in(
+        'be the first!',
+        app.get('/').get_data(as_text=True).lower(),
+    )
+
+
+def test_index_view_with_questions():
+    with test_database(TEST_DB, [User, Question, Answer]):
+        create_data()
+        questions = Question.select()
+        for question in questions:
+            assert_in(
+                question.text,
+                app.get('/').get_data(as_text=True)
+            )
+
+
+def test_index_view_logged_in():
+    with test_database(TEST_DB, [User, Question, Answer]):
+        create_data()
+        user = User.get(User.first_name == 'test_0')
+        app.post('/login', data=user.__dict__)
+        rv = app.get('/')
+        assert_in(
+            'new question',
+            rv.get_data(as_text=True).lower()
+        )
+        assert_in(
+            'log out',
+            rv.get_data(as_text=True).lower()
+        )
 
 
 

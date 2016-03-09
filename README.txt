@@ -56,4 +56,4 @@ Views:
   new_question
   view_question (allows to input a new answer)
 
-TODO: Write unit tests for models
+

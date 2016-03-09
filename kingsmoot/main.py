@@ -3,17 +3,12 @@ from flask_login import (LoginManager, login_user, logout_user,
                              login_required, current_user)
 from flask_bcrypt import check_password_hash
 
-import kingsmoot.models as models
+from kingsmoot.models import (init_db, User, Question,
+                              Answer, DoesNotExist, DB)
 from kingsmoot.forms import RegisterForm
 
 app = Flask(__name__)
 app.secret_key = 'sljdnfohr80wnfskjdnf9283rnkwjndf982rknjdsn9f8wrkn:woenf082'
-
-run_context = {
-    'debug': True,
-    'port': 8000,
-    'host': '0.0.0.0'
-}
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -23,15 +18,15 @@ login_manager.login_view = 'login'
 @login_manager.user_loader
 def load_user(userid):
     try:
-        return models.User.get(models.User.id == userid)
-    except models.DoesNotExist:
+        return User.get(User.id == userid)
+    except DoesNotExist:
         return None
 
 
 @app.before_request
 def before_request():
     """Connect to the database prior to each request"""
-    g.db = models.DB
+    g.db = DB
     g.db.connect()
     g.user = current_user
 
@@ -62,7 +57,7 @@ def logout():
 @app.route('/')
 def index():
     """Home page question stream"""
-    questions = models.Question.select().order_by(models.Question.timestamp).limit(10)
+    questions = Question.select().order_by(Question.timestamp).limit(10)
     inputs = {
         'questions': questions
     }
@@ -82,6 +77,10 @@ def new_question():
 
 
 if __name__ == '__main__':
-    models.init_db()
-    app.run(**run_context)
+    init_db()
+    app.run(
+        debug=True,
+        host='0.0.0.0',
+        port=8000
+    )
 
