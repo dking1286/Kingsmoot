@@ -489,7 +489,7 @@ def test_index_view_logged_in():
     with test_database(TEST_DB, [User, Question, Answer]):
         create_data()
         user = User.get(User.first_name == 'test_0')
-        app.post('/login', data=user.__dict__)
+        app.post('/login', data=user.to_dict())
         rv = app.get('/')
         assert_in(
             'new question',

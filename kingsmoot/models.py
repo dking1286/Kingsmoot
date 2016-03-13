@@ -37,6 +37,9 @@ class User(BaseModel, UserMixin):
         except IntegrityError:
             raise ValueError("User with that email already exists")
 
+    def to_dict(self):
+        return self.__dict__
+
 
 class Question(BaseModel):
     id = PrimaryKeyField()
@@ -50,6 +53,9 @@ class Question(BaseModel):
             text=text,
             user=user
         )
+
+    def to_dict(self):
+        return self.__dict__
 
 
 class Answer(BaseModel):
@@ -65,6 +71,9 @@ class Answer(BaseModel):
             user=user,
             question=question
         )
+
+    def to_dict(self):
+        return self.__dict__
 
 
 def init_db():
