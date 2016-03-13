@@ -12,6 +12,8 @@ import kingsmoot.main
 TEST_DB = SqliteDatabase(':memory:')
 TEST_DB.connect()
 
+kingsmoot.main.app.config['TESTING'] = True
+kingsmoot.main.app.config['WTF_CSRF_ENABLED'] = False
 app = kingsmoot.main.app.test_client()
 
 
@@ -485,11 +487,41 @@ def test_index_view_with_questions():
             )
 
 
+LOGIN_FORM_INFO = {
+    'email': 'test_0@example.com',
+    'password': 'password'
+}
+
+LOGIN_FORM_WRONG_INFO = {
+    'email': 'test_0@example.com',
+    'password': 'passwrd'
+}
+
+
+def test_login_view_good_login():
+    with test_database(TEST_DB, [User, Question, Answer]):
+        create_data()
+        rv = app.post('/login', data=LOGIN_FORM_INFO)
+        assert_equal(rv.status_code, 302)
+
+
+def test_login_view_wrong_username():
+    with test_database(TEST_DB, [User, Question, Answer]):
+        rv = app.post('/login', data=LOGIN_FORM_INFO)
+        assert_equal(rv.status_code, 200)
+
+
+def test_login_view_wrong_password():
+    with test_database(TEST_DB, [User, Question, Answer]):
+        create_data()
+        rv = app.post('/login', data=LOGIN_FORM_WRONG_INFO)
+        assert_equal(rv.status_code, 200)
+
+
 def test_index_view_logged_in():
     with test_database(TEST_DB, [User, Question, Answer]):
         create_data()
-        user = User.get(User.first_name == 'test_0')
-        app.post('/login', data=user.to_dict())
+        app.post('/login', data=LOGIN_FORM_INFO)
         rv = app.get('/')
         assert_in(
             'new question',

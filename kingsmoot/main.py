@@ -1,13 +1,14 @@
-from flask import Flask, g, render_template
+from flask import (Flask, g, render_template, request, redirect,
+                   url_for, flash)
 from flask_login import (LoginManager, login_user, logout_user,
                              login_required, current_user)
 from flask_bcrypt import check_password_hash
 
 from kingsmoot.models import (init_db, User, Question,
                               Answer, DoesNotExist, DB)
-from kingsmoot.forms import RegisterForm
+from kingsmoot.forms import RegisterForm, LoginForm
 
-app = Flask(__name__)
+app = Flask('kingsmoot')
 app.secret_key = 'sljdnfohr80wnfskjdnf9283rnkwjndf982rknjdsn9f8wrkn:woenf082'
 
 login_manager = LoginManager()
@@ -43,25 +44,47 @@ def register():
     form = RegisterForm()
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    pass
+    form = LoginForm()
+    failure_message = "Incorrect username or password"
+    success_message = "You have successfully logged in!"
+
+    if request.method == 'POST' and form.validate():
+        try:
+            user = User.get(User.email == form.email.data)
+        except DoesNotExist:
+            flash(failure_message, "error")
+        else:
+            if check_password_hash(user.password, form.password.data):
+                login_user(user)
+                flash(success_message, 'success')
+                return redirect(url_for('index'))
+            else:
+                flash(failure_message, "error")
+
+    return render_template(
+        'login.html',
+        form=form
+    )
 
 
 @app.route('/logout')
 @login_required
 def logout():
-    pass
+    logout_user()
+    flash("You have successfully logged out. Come back soon!")
+    return redirect(url_for('login'))
 
 
 @app.route('/')
 def index():
     """Home page question stream"""
     questions = Question.select().order_by(Question.timestamp).limit(10)
-    inputs = {
-        'questions': questions
-    }
-    return render_template('index.html', **inputs)
+    return render_template(
+        'index.html',
+        questions=questions
+    )
 
 
 @app.route('/view_question/<question_id>')
