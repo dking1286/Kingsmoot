@@ -8,16 +8,21 @@
     </ul>
 </div>
 {% endif %}
-{{ field.label }}
-{{ field }}
+{% if field.label.text.lower() != 'csrf token' %}
+    {{ field.label }}
+    {{ field }}
+{% endif %}
 {% endmacro %}
 
 {% macro make_menu(email, is_authenticated) %}
 <nav>
     {% if is_authenticated %}
-    Welcome, {{ email }}!
-    <a href="{{ url_for('logout') }}">Log out</a> |
-    <a href="{{ url_for('new_question') }}">New question</a>
+        Welcome, {{ email }}!
+        <a href="{{ url_for('logout') }}">Log out</a> |
+        <a href="{{ url_for('new_question') }}">New question</a>
+    {% else %}
+        <a href="{{ url_for('login') }}">Log in</a> |
+        Not a member yet? <a href="{{ url_for('register') }}">Sign up</a>
     {% endif %}
 </nav>
 {% endmacro %}

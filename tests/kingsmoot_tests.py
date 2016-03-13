@@ -470,9 +470,14 @@ def test_question_get_answers():
 
 
 def test_index_view_no_questions():
+    page_text = app.get('/').get_data(as_text=True).lower()
     assert_in(
         'be the first!',
-        app.get('/').get_data(as_text=True).lower(),
+        page_text
+    )
+    assert_in(
+        'log in',
+        page_text
     )
 
 
@@ -496,6 +501,14 @@ LOGIN_FORM_WRONG_INFO = {
     'email': 'test_0@example.com',
     'password': 'passwrd'
 }
+
+
+def test_login_view_text():
+    page_text = app.get('/login').get_data(as_text=True).lower()
+    assert_not_in(
+        'csrf token',
+        page_text
+    )
 
 
 def test_login_view_good_login():
