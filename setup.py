@@ -9,7 +9,7 @@ setup(
     name='Kingsmoot',
     author='Daniel Oliver King',
     author_email='daniel.oliver.king@gmail.com',
-    install_requires=['nose', 'flask', 'peewee'],
+    requires=['nose', 'flask', 'flask_login', 'flask_bcrypt', 'flask_wtf', 'peewee'],
     scripts=[],
     description=desc
 )
