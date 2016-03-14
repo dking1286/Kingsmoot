@@ -3,7 +3,7 @@
 <!-- Inputs: questions (SelectQuery) -->
 
 {% block content %}
-{{ make_menu(current_user.email, current_user.is_authenticated) }}
+{{ make_menu(current_user.first_name, current_user.is_authenticated) }}
 <h2>Questions</h2>
 {% if questions.count() %}
     {% for question in questions %}

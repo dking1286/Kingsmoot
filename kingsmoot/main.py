@@ -41,7 +41,7 @@ def after_request(response):
 
 @app.route('/register')
 def register():
-    form = RegisterForm()
+    return "Not yet implemented"
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -90,13 +90,13 @@ def index():
 @app.route('/view_question/<question_id>')
 @login_required
 def view_question(question_id):
-    pass
+    return "Not yet implemented"
 
 
 @app.route('/new_question')
 @login_required
 def new_question():
-    pass
+    return "Not yet implemented"
 
 
 if __name__ == '__main__':

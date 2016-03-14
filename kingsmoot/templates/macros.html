@@ -14,16 +14,32 @@
 {% endif %}
 {% endmacro %}
 
-{% macro make_menu(email, is_authenticated) %}
-<nav>
-    {% if is_authenticated %}
-        Welcome, {{ email }}!
-        <a href="{{ url_for('logout') }}">Log out</a> |
-        <a href="{{ url_for('new_question') }}">New question</a>
-    {% else %}
-        <a href="{{ url_for('login') }}">Log in</a> |
-        Not a member yet? <a href="{{ url_for('register') }}">Sign up</a>
-    {% endif %}
+{% macro make_menu(first_name, is_authenticated) %}
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=#layout-navbar-collapse" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{ url_for('index') }}">Kingsmoot</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="layout-navbar-collapse">
+            <ul class="nav navbar-nav nav-pills">
+                {% if is_authenticated %}
+                <li>Welcome, {{ first_name }}!</li>
+                <li role="presentation"><a href="{{ url_for('logout') }}">Log out</a></li>
+                <li role="presentation"><a href="{{ url_for('new_question') }}">Ask a question</a></li>
+                {% else %}
+                <li role="presentation"><a href="{{ url_for('login') }}">Log in</a></li>
+                <li role="presentation"><a href="{{ url_for('register') }}">Sign up</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
 </nav>
 {% endmacro %}
 
