@@ -50,6 +50,9 @@ def login():
     failure_message = "Incorrect username or password"
     success_message = "You have successfully logged in!"
 
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
     if request.method == 'POST' and form.validate():
         try:
             user = User.get(User.email == form.email.data)
