@@ -63,4 +63,4 @@ Register view behavior:
     If they type incorrect information in any of these fields, they should
     be returned to this view when they submit. Also, if the user is already
     logged in, they should be redirected to the index view. Once the user
-    registers, they should be redirected to the index view.
+    registers, they should be redirected to the index view and logged in.

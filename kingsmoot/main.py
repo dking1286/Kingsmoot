@@ -42,6 +42,29 @@ def after_request(response):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
+    failure_message = "Sorry, we couldn't register you with that info, please try again!"
+    success_message = "Congratulations, you have been registered!"
+
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        if form.validate():
+            User.add(
+                email=form.email.data,
+                first_name=form.first_name.data,
+                last_name=form.last_name.data,
+                password=form.password.data
+            )
+            flash(success_message, 'success')
+            return redirect(url_for('index'))
+        else:
+            flash(failure_message, 'error')
+
+    return render_template(
+        'register.html',
+        form=form
+    )
 
 
 @app.route('/login', methods=['GET', 'POST'])
