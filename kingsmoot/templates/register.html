@@ -1,0 +1,8 @@
+{% extends 'layout.html' %}
+<!-- Inputs: form (RegisterForm) -->
+
+{% block content %}
+    {% for field in form %}
+        <p>{{ render_field(field) }}</p>
+    {% endfor %}
+{% endblock %}

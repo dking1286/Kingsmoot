@@ -1,9 +1,7 @@
 {% extends 'layout.html' %}
-{% from 'macros.html' import make_menu %}
 <!-- Inputs: questions (SelectQuery) -->
 
 {% block content %}
-{{ make_menu(current_user.first_name, current_user.is_authenticated) }}
 <h2>Questions</h2>
 {% if questions.count() %}
     {% for question in questions %}
