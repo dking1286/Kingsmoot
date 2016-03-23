@@ -258,3 +258,31 @@ def test_view_question_view_contains_new_answer_form():
         )
 
 
+def test_new_question_view_redirects_to_index():
+    """When the user creates a new question, they should be redirected to the
+    index view.
+    """
+    with test_database(TEST_DB, [User, Question, Answer]):
+        create_data()
+        app.post('/login', data=LOGIN_FORM_INFO)
+        rv = app.post('/new_question')
+        assert_equal(rv.status_code, REDIRECT)
+        logout()
+
+
+def test_new_question_view_creates_new_question():
+    """When the user creates a new question, it should be reflected on the
+    index view.
+    """
+    with test_database(TEST_DB, [User, Question, Answer]):
+        create_data()
+        app.post('/login', data=LOGIN_FORM_INFO)
+        app.post(
+            '/new_question',
+            data={
+               'text': 'This is the question text'
+            }
+        )
+        page_text = app.get('/').get_data(as_text=True)
+        assert_in('This is the question text', page_text)
+        logout()

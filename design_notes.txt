@@ -64,3 +64,11 @@ Register view behavior:
     be returned to this view when they submit. Also, if the user is already
     logged in, they should be redirected to the index view. Once the user
     registers, they should be redirected to the index view and logged in.
+
+New Question view behavior:
+    In the New Question view, the user should be presented with a test field, where they
+    can type in a new question. However, the view should only be accessible when they
+    are logged in. If they are not, they should be redirected to the login view if they try
+    to access this one.
+    Q: Should this view require the question to contain a question mark? Should
+       I update the new question form to reflect this?
