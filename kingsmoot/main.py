@@ -39,9 +39,9 @@ def after_request(response):
     return response
 
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    return "Not yet implemented"
+    form = RegisterForm()
 
 
 @app.route('/login', methods=['GET', 'POST'])
