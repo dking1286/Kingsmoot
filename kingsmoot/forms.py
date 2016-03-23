@@ -6,7 +6,7 @@ from wtforms.validators import (DataRequired, ValidationError, Email,
 from kingsmoot.models import User
 
 
-def email_exists(form, field):
+def email_unique(form, field):
     if User.select().where(User.email == field.data).exists():
         raise ValidationError('User with that email address already exists')
 
@@ -29,7 +29,7 @@ class RegisterForm(Form):
         validators=[
             DataRequired(),
             Email(),
-            email_exists
+            email_unique
         ]
     )
     password = PasswordField(
