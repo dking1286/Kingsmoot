@@ -6,7 +6,8 @@ from flask_bcrypt import check_password_hash
 
 from kingsmoot.models import (init_db, User, Question,
                               Answer, DoesNotExist, DB)
-from kingsmoot.forms import RegisterForm, LoginForm, NewAnswerForm
+from kingsmoot.forms import (RegisterForm, LoginForm, NewAnswerForm,
+                             NewQuestionForm)
 
 app = Flask('kingsmoot')
 app.secret_key = 'sljdnfohr80wnfskjdnf9283rnkwjndf982rknjdsn9f8wrkn:woenf082'
@@ -131,10 +132,24 @@ def view_question(question_id):
     )
 
 
-@app.route('/new_question')
+@app.route('/new_question', methods=['GET', 'POST'])
 @login_required
 def new_question():
-    return "Not yet implemented"
+    form = NewQuestionForm()
+    success_message = 'Your question has been posted!'
+
+    if request.method == 'POST' and form.validate():
+        Question.add(
+            text=form.text.data,
+            user=current_user._get_current_object()
+        )
+        flash(success_message, 'success')
+        return redirect(url_for('index'))
+
+    return render_template(
+        'new_question.html',
+        form=form
+    )
 
 
 if __name__ == '__main__':
