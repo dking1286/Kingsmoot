@@ -227,3 +227,34 @@ def test_register_view_logs_user_in():
             'log out',
             rv.get_data(as_text=True).lower()
         )
+
+
+def test_view_question_view_contains_answers():
+    """The view_question view should show all of the
+    existing answers to the given question.
+    """
+    with test_database(TEST_DB, [User, Question, Answer]):
+        create_data()
+        question = Question.get()
+        rv = app.get('/view_question/{}'.format(question.id))
+        for answer in question.answers:
+            assert_in(
+                answer.text,
+                rv.get_data(as_text=True)
+            )
+
+
+def test_view_question_view_contains_new_answer_form():
+    """The view_question view should have a place for the user
+    to type a new answer to the question
+    """
+    with test_database(TEST_DB, [User, Question, Answer]):
+        create_data()
+        question = Question.get()
+        rv = app.get('/view_question/{}'.format(question.id))
+        assert_in(
+            'Answer this question...',
+            rv.get_data(as_text=True)
+        )
+
+

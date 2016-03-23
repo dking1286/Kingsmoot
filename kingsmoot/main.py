@@ -1,12 +1,12 @@
 from flask import (Flask, g, render_template, request, redirect,
                    url_for, flash)
 from flask_login import (LoginManager, login_user, logout_user,
-                             login_required, current_user)
+                         login_required, current_user)
 from flask_bcrypt import check_password_hash
 
 from kingsmoot.models import (init_db, User, Question,
                               Answer, DoesNotExist, DB)
-from kingsmoot.forms import RegisterForm, LoginForm
+from kingsmoot.forms import RegisterForm, LoginForm, NewAnswerForm
 
 app = Flask('kingsmoot')
 app.secret_key = 'sljdnfohr80wnfskjdnf9283rnkwjndf982rknjdsn9f8wrkn:woenf082'
@@ -42,24 +42,20 @@ def after_request(response):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
-    failure_message = "Sorry, we couldn't register you with that info, please try again!"
     success_message = "Congratulations, you have been registered!"
 
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
-    if request.method == 'POST':
-        if form.validate():
-            User.add(
-                email=form.email.data,
-                first_name=form.first_name.data,
-                last_name=form.last_name.data,
-                password=form.password.data
-            )
-            flash(success_message, 'success')
-            return redirect(url_for('index'))
-        else:
-            flash(failure_message, 'error')
+    if request.method == 'POST' and form.validate():
+        User.add(
+            email=form.email.data,
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            password=form.password.data
+        )
+        flash(success_message, 'success')
+        return redirect(url_for('index'))
 
     return render_template(
         'register.html',
@@ -113,10 +109,26 @@ def index():
     )
 
 
-@app.route('/view_question/<question_id>')
+@app.route('/view_question/<question_id>', methods=['GET', 'POST'])
 @login_required
 def view_question(question_id):
-    return "Not yet implemented"
+    form = NewAnswerForm()
+    question = Question.get(Question.id == question_id)
+    success_message = 'Your answer has been posted!'
+
+    if request.method == 'POST' and form.validate():
+        Answer.add(
+            text=form.text.data,
+            question=question,
+            user=current_user._get_current_object()
+        )
+        flash(success_message, 'success')
+
+    return render_template(
+        'view_question.html',
+        question=question,
+        form=form
+    )
 
 
 @app.route('/new_question')

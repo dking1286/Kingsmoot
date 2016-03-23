@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+{% from 'macros.html' import render_field %}
+<!-- inputs: question, form -->
+
+<h1>{{ question.text }}</h1>
+<table>
+    {% for answer in question.answers %}
+        <tr>
+            <table>
+                <tr>
+                    Posted by:
+                    {{ answer.user.first_name }}
+                    {{ answer.user.last_name }}
+                    on
+                    {{ answer.timestamp }}
+                </tr>
+                <tr>
+                    {{ answer.text }}
+                </tr>
+            </table>
+        </tr>
+    {% endfor %}
+    <tr>
+        Want to contribute to this conversation?<br/>
+        {{ render_field(form.text) }}
+    </tr>
+</table>
