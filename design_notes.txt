@@ -72,3 +72,6 @@ New Question view behavior:
     to access this one.
     Q: Should this view require the question to contain a question mark? Should
        I update the new question form to reflect this?
+
+TODO: Finish new question template
+TODO: Run tests to check functionality of new views
