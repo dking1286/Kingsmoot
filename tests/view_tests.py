@@ -192,8 +192,9 @@ def test_register_view_adds_user_to_database():
 
         # The user's info should match the register form info
         user = users.get()
-        for key, val in REGISTER_FORM_INFO.items():
-            assert_equal(user.__dict__[key], val)
+        assert_equal(user.first_name, REGISTER_FORM_INFO['first_name'])
+        assert_equal(user.last_name, REGISTER_FORM_INFO['last_name'])
+        assert_equal(user.email, REGISTER_FORM_INFO['email'])
         logout()
 
 

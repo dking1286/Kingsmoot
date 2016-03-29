@@ -55,6 +55,8 @@ def register():
             last_name=form.last_name.data,
             password=form.password.data
         )
+        user = User.get(User.email == form.email.data)
+        login_user(user)
         flash(success_message, 'success')
         return redirect(url_for('index'))
 
