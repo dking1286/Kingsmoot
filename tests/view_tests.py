@@ -266,7 +266,10 @@ def test_new_question_view_redirects_to_index():
     with test_database(TEST_DB, [User, Question, Answer]):
         create_data()
         app.post('/login', data=LOGIN_FORM_INFO)
-        rv = app.post('/new_question')
+        rv = app.post(
+            '/new_question',
+            data={'text': "Here is a new question"}
+        )
         assert_equal(rv.status_code, REDIRECT)
         logout()
 

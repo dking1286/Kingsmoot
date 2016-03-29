@@ -2,7 +2,11 @@
 {% from 'macros.html' import render_field %}
 <!-- Inputs: form (LoginForm) -->
 {% block content %}
-{% for field in form %}
-    {{ render_field(field) }}
-{% endfor %}
+<form method="POST" action="">
+    {% for field in form %}
+        {{ render_field(field) }}
+    {% endfor %}
+    <input type="submit" value="Log in"/>
+</form>
+
 {% endblock %}

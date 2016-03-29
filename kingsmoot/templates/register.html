@@ -3,7 +3,14 @@
 <!-- Inputs: form (RegisterForm) -->
 
 {% block content %}
-    {% for field in form %}
-        <p>{{ render_field(field) }}</p>
-    {% endfor %}
+<form method='POST' action=''>
+    {{ form.hidden_tag() }}
+    {{ render_field(form.first_name) }}
+    {{ render_field(form.last_name) }}
+    {{ render_field(form.email) }}
+    {{ render_field(form.password) }}
+    {{ render_field(form.password2) }}
+    <input type="submit" value="Sign up!"/>
+</form>
+
 {% endblock %}

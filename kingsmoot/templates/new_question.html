@@ -1,3 +1,9 @@
 {% extends 'layout.html' %}
 {% from 'macros.html' import render_field %}
 
+{% block content %}
+{% for field in form %}
+    {{ render_field(field) }}
+{% endfor %}
+{% endblock %}
+
