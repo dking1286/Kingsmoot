@@ -2,6 +2,7 @@
 {% from 'macros.html' import render_field %}
 <!-- inputs: question, form -->
 
+{% block content %}
 <h1>{{ question.text }}</h1>
 <table>
     {% for answer in question.answers %}
@@ -25,3 +26,4 @@
         {{ render_field(form.text) }}
     </tr>
 </table>
+{% endblock %}

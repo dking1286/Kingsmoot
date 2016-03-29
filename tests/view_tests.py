@@ -236,7 +236,7 @@ def test_view_question_view_contains_answers():
     """
     with test_database(TEST_DB, [User, Question, Answer]):
         create_data()
-        question = Question.get()
+        question = Question.select().limit(1).get()
         rv = app.get('/view_question/{}'.format(question.id))
         for answer in question.answers:
             assert_in(

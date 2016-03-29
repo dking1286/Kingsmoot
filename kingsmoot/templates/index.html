@@ -3,9 +3,9 @@
 
 {% block content %}
 <h2>Questions</h2>
-{% if questions.count() %}
+{% if questions %}
     {% for question in questions %}
-        <a href="./view_question/{{ question.id }}">
+        <a href="{{ url_for('view_question', question_id=question.id) }}">
             {{ question.text }}
         </a>
         <br/>
