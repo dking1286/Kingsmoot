@@ -73,5 +73,4 @@ New Question view behavior:
     Q: Should this view require the question to contain a question mark? Should
        I update the new question form to reflect this?
 
-TODO: Finish new question template
-TODO: Run tests to check functionality of new views
+TODO: Figure out why the new question form isn't submitting properly
