@@ -23,7 +23,11 @@
     {% endfor %}
     <tr>
         Want to contribute to this conversation?<br/>
-        {{ render_field(form.text) }}
+        <form>
+            {{ form.hidden_tag() }}
+            {{ render_field(form.text) }}
+            <input type="submit" value="Share your answer!" />
+        </form>
     </tr>
 </table>
 {% endblock %}

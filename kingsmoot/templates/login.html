@@ -3,9 +3,9 @@
 <!-- Inputs: form (LoginForm) -->
 {% block content %}
 <form method="POST" action="">
-    {% for field in form %}
-        {{ render_field(field) }}
-    {% endfor %}
+    {{ form.hidden_tag() }}
+    {{ render_field(form.email) }}
+    {{ render_field(form.password) }}
     <input type="submit" value="Log in"/>
 </form>
 
